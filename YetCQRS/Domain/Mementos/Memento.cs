@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YetCQRS.Domain
+namespace YetCQRS.Domain.Mementos
 {
     public abstract class Memento
     {

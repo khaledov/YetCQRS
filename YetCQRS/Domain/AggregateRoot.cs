@@ -4,35 +4,32 @@ using YetCQRS.Extensions;
 using YetCQRS.Thread;
 using System;
 using System.Collections.Generic;
+using YetCQRS.EventStore;
 
 namespace YetCQRS.Domain
 {
-    public abstract class AggregateRoot : IOriginator
+    public abstract class AggregateRoot : IDomainEventProvider
     {
         #region Attributes
         private readonly List<Event> _changes = new List<Event>();
-        public Guid Id { get; protected set; }
-        public int Version { get; protected set; }
 
         private NamedLocker _locker = new NamedLocker();
-        #endregion
 
-        public IEnumerable<Event> GetUncommitedChanges()
+        public Guid Id { get; protected set; }
+
+        public int Version { get; protected set; }
+
+        #endregion
+        #region Implemented Methods
+        IEnumerable<Event> IDomainEventProvider.GetUncommittedChanges()
         {
             lock (_locker.GetLock(Id.ToString()))
             {
                 return _changes;
             }
         }
-        public void MarkChangesAsCommited()
-        {
-            lock (_locker.GetLock(Id.ToString()))
-            {
-                Version = Version + _changes.Count;
-                _changes.Clear();
-            }
-        }
-        public void LoadFromHistory(IEnumerable<Event> history)
+
+        void IDomainEventProvider.LoadFromHistory(IEnumerable<Event> history)
         {
             foreach (var e in history)
             {
@@ -41,6 +38,16 @@ namespace YetCQRS.Domain
                 ApplyChange(e, false);
             }
         }
+
+        void IDomainEventProvider.MarkChangesAsCommitted()
+        {
+            lock (_locker.GetLock(Id.ToString()))
+            {
+                Version = Version + _changes.Count;
+                _changes.Clear();
+            }
+        }
+        #endregion
         private void ApplyChange(Event @event, bool isNew)
         {
             lock (_locker.GetLock(Id.ToString()))
@@ -59,9 +66,7 @@ namespace YetCQRS.Domain
             ApplyChange(@event, true);
         }
 
-        public abstract Memento GetMemento();
-
-        public abstract void SetMemento(Memento memento);
-
+        
     }
 }
+    
