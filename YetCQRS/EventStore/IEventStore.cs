@@ -6,7 +6,8 @@ namespace YetCQRS.EventStore
 {
     public interface IEventStore
     {
-        void Save(Event @event);
+        IEventBus EventBus { get; set; }
+        void Save(Guid aggregateId, Event @event);
         IEnumerable<Event> Get(Guid aggregateId, int fromVersion);
     }
 }

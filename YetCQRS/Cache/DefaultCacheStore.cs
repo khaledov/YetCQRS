@@ -38,5 +38,11 @@ namespace YetCQRS.Cache
         {
             _cache.Set(aggregateRoot.Id, aggregateRoot, _cacheOptions);
         }
+
+        public bool IsTracked(Guid id)
+        {
+
+            return _cache.TryGetValue(id, out var o) && o != null;
+        }
     }
 }

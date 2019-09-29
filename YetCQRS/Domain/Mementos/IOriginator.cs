@@ -1,8 +1,8 @@
 ﻿namespace YetCQRS.Domain.Mementos
 {
-    public interface IOriginator<T> where T:Memento
+    public interface IOriginator
     {
-        T GetMemento();
-        void SetMemento(T memento);
+        Memento GetMemento();
+        void SetMemento(Memento memento);
     }
 }

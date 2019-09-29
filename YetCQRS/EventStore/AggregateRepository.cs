@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using YetCQRS.Domain;
 using YetCQRS.Domain.Exceptions;
 using YetCQRS.Events;
+using YetCQRS.Thread;
 
 namespace YetCQRS.EventStore
 {
@@ -11,16 +12,15 @@ namespace YetCQRS.EventStore
         IAggregateRepository<T> where T:AggregateRoot,new()
      {
         private readonly IEventStore _eventStore;
-        private readonly IEventBus _eventBus;
+        private NamedLocker _locker = new NamedLocker();
 
-        public AggregateRepository(IEventStore eventStore, IEventBus eventBus)
+        public AggregateRepository(IEventStore eventStore)
         {
             if (eventStore == null)
                 throw new ArgumentNullException("eventStore");
-            if (eventBus == null)
-                throw new ArgumentNullException("eventBus");
+           
             _eventStore = eventStore;
-            _eventBus = eventBus;
+         
         }
 
         public void Save(T aggregate, int? expectedVersion = null) 
@@ -28,7 +28,8 @@ namespace YetCQRS.EventStore
             if (expectedVersion != null && _eventStore.Get(
                     aggregate.Id, expectedVersion.Value).Any())
                 throw new ConcurrencyException(aggregate.Id);
-            var i = 0;
+
+          
             IDomainEventProvider domainEventProvider= (IDomainEventProvider)aggregate;
             foreach (var @event in domainEventProvider.GetUncommittedChanges())
             {
@@ -37,12 +38,9 @@ namespace YetCQRS.EventStore
                 if (@event.Id == Guid.Empty)
                     throw new AggregateOrEventMissingIdException(
                         aggregate.GetType(), @event.GetType());
-                i++;
-                @event.AggregateId = aggregate.Id;
-                @event.Version = aggregate.Version + i;
-                @event.TimeStamp = DateTimeOffset.UtcNow;
-                _eventStore.Save(@event);
-                _eventBus.Publish(aggregate.Id,@event);
+             
+                _eventStore.Save(aggregate.Id, @event);
+               
             }
             domainEventProvider.MarkChangesAsCommitted();
         }

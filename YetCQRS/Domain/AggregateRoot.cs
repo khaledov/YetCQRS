@@ -5,10 +5,12 @@ using YetCQRS.Thread;
 using System;
 using System.Collections.Generic;
 using YetCQRS.EventStore;
+using YetCQRS.Domain.Mementos;
 
 namespace YetCQRS.Domain
 {
-    public abstract class AggregateRoot : IDomainEventProvider
+    public abstract class AggregateRoot : IDomainEventProvider,
+        IOriginator 
     {
         #region Attributes
         private readonly List<Event> _changes = new List<Event>();
@@ -66,7 +68,11 @@ namespace YetCQRS.Domain
             ApplyChange(@event, true);
         }
 
-        
+
+        public abstract Memento GetMemento();
+
+        public abstract void SetMemento(Memento memento);
+       
     }
 }
     
