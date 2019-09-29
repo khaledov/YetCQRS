@@ -12,18 +12,16 @@ namespace YetCQRS.Commands
     public abstract class BaseCommandHandler<TCommand> :
          ICommandHandler<TCommand> where TCommand : ICommand
     {
-        protected IEventBus EventBus { get; }
+      
         protected IValidator<TCommand> Validator { get; }
        
 
         public BaseCommandHandler(
-            IValidator<TCommand> validator,
-            IEventBus eventBus
+            IValidator<TCommand> validator
             )
         {
             Validator = validator ??
                  throw new InvalidOperationException("It seems that you tried to instantiate a command handler without a validator.");
-            EventBus = eventBus;
           
         }
 
@@ -31,8 +29,7 @@ namespace YetCQRS.Commands
 
 
 
-        protected Task<Unit> PublishEvents(Guid streamId, params Event[] events) =>
-           EventBus.Publish(streamId, events);
+      
         protected Option<TCommand, Error> ValidateCommand(TCommand command)
         {
             var validationResult = Validator.Validate(command);

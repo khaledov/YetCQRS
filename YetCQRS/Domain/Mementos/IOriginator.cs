@@ -1,4 +1,4 @@
-﻿namespace YetCQRS.Domain
+﻿namespace YetCQRS.Domain.Mementos
 {
     public interface IOriginator
     {

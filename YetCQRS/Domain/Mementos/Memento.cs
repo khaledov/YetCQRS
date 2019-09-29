@@ -1,7 +1,8 @@
 ﻿using System;
 
-namespace YetCQRS.Domain
+namespace YetCQRS.Domain.Mementos
 {
+    [Serializable]
     public abstract class Memento
     {
         public Guid Id { get; set; }
