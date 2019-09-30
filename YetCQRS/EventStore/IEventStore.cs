@@ -1,6 +1,7 @@
 ﻿using YetCQRS.Events;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace YetCQRS.EventStore
 {
@@ -8,6 +9,7 @@ namespace YetCQRS.EventStore
     {
         IEventBus EventBus { get; set; }
         void Save(Guid aggregateId, Event @event);
-        IEnumerable<Event> Get(Guid aggregateId, int fromVersion);
+        IEnumerable LoadEventsFor(Guid aggregateId, int fromVersion);
+        //void SaveEventsFor(Guid id, int eventsLoaded, ArrayList newEvents);
     }
 }

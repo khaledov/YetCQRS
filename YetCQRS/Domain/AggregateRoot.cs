@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using YetCQRS.EventStore;
 using YetCQRS.Domain.Mementos;
+using System.Collections;
 
 namespace YetCQRS.Domain
 {
@@ -31,14 +32,16 @@ namespace YetCQRS.Domain
             }
         }
 
-        void IDomainEventProvider.LoadFromHistory(IEnumerable<Event> history)
+        void IDomainEventProvider.LoadFromHistory(IEnumerable history)
         {
-            foreach (var e in history)
-            {
-                if (e.Version != Version + 1)
-                    throw new EventsOutOfOrderException(e.Id);
-                ApplyChange(e, false);
-            }
+          
+                foreach (var e in history)
+                {
+                var @event = e as Event;
+                if (@event.Version != Version + 1)
+                    throw new EventsOutOfOrderException(@event.Id);
+                ApplyChange(@event, false);
+                }
         }
 
         void IDomainEventProvider.MarkChangesAsCommitted()

@@ -25,9 +25,9 @@ namespace YetCQRS.EventStore
 
         public void Save(T aggregate, int? expectedVersion = null) 
         {
-            if (expectedVersion != null && _eventStore.Get(
-                    aggregate.Id, expectedVersion.Value).Any())
-                throw new ConcurrencyException(aggregate.Id);
+            //if (expectedVersion != null && _eventStore.LoadEventsFor(
+            //        aggregate.Id, expectedVersion.Value).Any())
+            //    throw new ConcurrencyException(aggregate.Id);
 
           
             IDomainEventProvider domainEventProvider= (IDomainEventProvider)aggregate;
@@ -55,9 +55,9 @@ namespace YetCQRS.EventStore
           return  Task.Run(() => {
                 var aggregate = new T();
                 IDomainEventProvider domainEventProvider = (IDomainEventProvider)aggregate;
-                var events = _eventStore.Get(id, -1);
-                if (!events.Any())
-                    throw new AggregateNotFoundException(id);
+                var events = _eventStore.LoadEventsFor(id, -1);
+                //if (!events.Any())
+                //    throw new AggregateNotFoundException(id);
 
                 domainEventProvider.LoadFromHistory(events);
               return aggregate;
