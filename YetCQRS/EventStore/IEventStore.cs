@@ -8,8 +8,8 @@ namespace YetCQRS.EventStore
     public interface IEventStore
     {
         IEventBus EventBus { get; set; }
-        void Save(Guid aggregateId, Event @event);
+        void Save(Guid aggregateId, IList<Event> newEvents);
         IEnumerable LoadEventsFor(Guid aggregateId, int fromVersion);
-        //void SaveEventsFor(Guid id, int eventsLoaded, ArrayList newEvents);
+       
     }
 }

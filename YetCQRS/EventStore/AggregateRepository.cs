@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using YetCQRS.Domain;
 using YetCQRS.Domain.Exceptions;
-using YetCQRS.Events;
 using YetCQRS.Thread;
 
 namespace YetCQRS.EventStore
@@ -25,23 +24,19 @@ namespace YetCQRS.EventStore
 
         public void Save(T aggregate, int? expectedVersion = null) 
         {
-            //if (expectedVersion != null && _eventStore.LoadEventsFor(
-            //        aggregate.Id, expectedVersion.Value).Any())
-            //    throw new ConcurrencyException(aggregate.Id);
-
-          
+                    
             IDomainEventProvider domainEventProvider= (IDomainEventProvider)aggregate;
-            foreach (var @event in domainEventProvider.GetUncommittedChanges())
+            var eventList = domainEventProvider.GetUncommittedChanges().ToList();
+            eventList.ForEach(e =>
             {
-                if (@event.Id == Guid.Empty)
-                    @event.Id = aggregate.Id;
-                if (@event.Id == Guid.Empty)
+                if (e.Id == Guid.Empty)
+                    e.Id = aggregate.Id;
+                if (e.Id == Guid.Empty)
                     throw new AggregateOrEventMissingIdException(
-                        aggregate.GetType(), @event.GetType());
-             
-                _eventStore.Save(aggregate.Id, @event);
-               
-            }
+                        aggregate.GetType(), e.GetType());
+            });
+            
+            _eventStore.Save(aggregate.Id, eventList);
             domainEventProvider.MarkChangesAsCommitted();
         }
 
@@ -56,9 +51,7 @@ namespace YetCQRS.EventStore
                 var aggregate = new T();
                 IDomainEventProvider domainEventProvider = (IDomainEventProvider)aggregate;
                 var events = _eventStore.LoadEventsFor(id, -1);
-                //if (!events.Any())
-                //    throw new AggregateNotFoundException(id);
-
+              
                 domainEventProvider.LoadFromHistory(events);
               return aggregate;
           });
