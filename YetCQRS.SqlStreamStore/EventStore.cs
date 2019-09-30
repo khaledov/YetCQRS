@@ -4,9 +4,7 @@ using SqlStreamStore.Streams;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 using YetCQRS.Events;
 using YetCQRS.EventStore;
 
@@ -24,6 +22,8 @@ namespace YetCQRS.SqlStreamStore
         }
         public  IEnumerable LoadEventsFor(Guid aggregateId, int fromVersion)
         {
+        
+
             var endOfStream = false;
             var startVersion = fromVersion;
             while(!endOfStream)
@@ -39,13 +39,24 @@ namespace YetCQRS.SqlStreamStore
            
         }
 
-        public void Save(Guid aggregateId, Event @event)
+        public void Save(Guid aggregateId, IList<Event> newEvents)
         {
 
-            var msg = new NewStreamMessage(aggregateId, @event.GetType().ToString(), JsonConvert.SerializeObject(@event));
+            if (newEvents.Count == 0)
+                return;
+            
+            foreach (var e in newEvents)
+                if (e.Id != aggregateId)
+                    throw new InvalidOperationException(
+                        "Cannot save events reporting inconsistent aggregate IDs");
+            var eventsLoaded = newEvents.Count;
+            var expected = eventsLoaded == 0 ? ExpectedVersion.NoStream : eventsLoaded - 1;
            
-            _streamStore.AppendToStream(aggregateId.ToString(), ExpectedVersion.Any, msg);
-            EventBus.Publish(aggregateId, @event);
+            _streamStore.AppendToStream(aggregateId.ToString(), expected, newEvents
+                .Cast<dynamic>()
+                .Select(e => new NewStreamMessage(e.Id, e.GetType().ToString(), JsonConvert.SerializeObject(e))).ToArray());
+
+            EventBus.Publish(aggregateId, newEvents.ToArray());
         }
     }
 }
