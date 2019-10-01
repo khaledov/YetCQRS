@@ -34,14 +34,17 @@ namespace YetCQRS.Domain
 
         void IDomainEventProvider.LoadFromHistory(IEnumerable history)
         {
-          
+            lock (_locker.GetLock(Id.ToString()))
+            {
+
                 foreach (var e in history)
                 {
-                var @event = e as Event;
-                if (@event.Version != Version + 1)
-                    throw new EventsOutOfOrderException(@event.Id);
-                ApplyChange(@event, false);
+                    var @event = e as Event;
+                    if (@event.Version != Version + 1)
+                        throw new EventsOutOfOrderException(@event.Id);
+                    ApplyChange(@event, false);
                 }
+            }
         }
 
         void IDomainEventProvider.MarkChangesAsCommitted()

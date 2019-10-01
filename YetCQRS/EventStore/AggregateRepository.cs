@@ -24,20 +24,24 @@ namespace YetCQRS.EventStore
 
         public void Save(T aggregate, int? expectedVersion = null) 
         {
-                    
-            IDomainEventProvider domainEventProvider= (IDomainEventProvider)aggregate;
-            var eventList = domainEventProvider.GetUncommittedChanges().ToList();
-            eventList.ForEach(e =>
+            lock(_locker.GetLock(aggregate.Id.ToString()))
             {
-                if (e.Id == Guid.Empty)
-                    e.Id = aggregate.Id;
-                if (e.Id == Guid.Empty)
-                    throw new AggregateOrEventMissingIdException(
-                        aggregate.GetType(), e.GetType());
-            });
-            
-            _eventStore.Save(aggregate.Id, eventList);
-            domainEventProvider.MarkChangesAsCommitted();
+                IDomainEventProvider domainEventProvider = (IDomainEventProvider)aggregate;
+                var eventList = domainEventProvider.GetUncommittedChanges().ToList();
+                eventList.ForEach(e =>
+                {
+                    if (e.Id == Guid.Empty)
+                        e.Id = aggregate.Id;
+                    if (e.Id == Guid.Empty)
+                        throw new AggregateOrEventMissingIdException(
+                            aggregate.GetType(), e.GetType());
+                });
+
+                _eventStore.Save(aggregate.Id, eventList);
+                domainEventProvider.MarkChangesAsCommitted();
+            }
+                    
+          
         }
 
         public Task<T> Get(Guid aggregateId) 
