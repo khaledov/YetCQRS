@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using MediatR;
 using Optional;
+using Optional.Async;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using YetCQRS.Events;
 
 namespace YetCQRS.Commands
 {
@@ -25,11 +25,14 @@ namespace YetCQRS.Commands
           
         }
 
-        public abstract Task<Option<Unit, Error>> Handle(TCommand request, CancellationToken cancellationToken);
+        public Task<Option<Unit, Error>> Handle(TCommand request, CancellationToken cancellationToken) =>
+            ValidateCommand(request)
+            .FlatMapAsync(Handle);
 
 
+        public abstract Task<Option<Unit, Error>> Handle(TCommand request);
 
-      
+
         protected Option<TCommand, Error> ValidateCommand(TCommand command)
         {
             var validationResult = Validator.Validate(command);
@@ -37,7 +40,8 @@ namespace YetCQRS.Commands
             return validationResult
                 .SomeWhen(
                 r => r.IsValid,
-                Error.Validation(validationResult.Errors.Select(e => e.ErrorMessage)))
+                r=>Error.Validation(r.Errors.Select(e=>e.ErrorMessage)))
+                //Error.Validation(validationResult.Errors.Select(e => e.ErrorMessage)))
                .Map(_ => command);
         }
     }
