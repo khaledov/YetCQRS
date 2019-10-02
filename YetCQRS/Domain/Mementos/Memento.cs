@@ -3,9 +3,8 @@
 namespace YetCQRS.Domain.Mementos
 {
     [Serializable]
-    public abstract class Memento
+    public abstract class Memento:Entity<Guid>
     {
-        public Guid Id { get; set; }
-        public int Version { get; set; }
+       public int Version { get; set; }
     }
 }

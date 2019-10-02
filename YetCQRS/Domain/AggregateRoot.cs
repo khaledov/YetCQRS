@@ -10,15 +10,12 @@ using System.Collections;
 
 namespace YetCQRS.Domain
 {
-    public abstract class AggregateRoot : IDomainEventProvider,
-        IOriginator 
+    public abstract class AggregateRoot :Entity<Guid>, IDomainEventProvider
     {
         #region Attributes
         private readonly List<Event> _changes = new List<Event>();
 
         private NamedLocker _locker = new NamedLocker();
-
-        public Guid Id { get; protected set; }
 
         public int Version { get; protected set; }
 
@@ -73,12 +70,8 @@ namespace YetCQRS.Domain
         {
             ApplyChange(@event, true);
         }
-
-
-        public abstract Memento GetMemento();
-
-        public abstract void SetMemento(Memento memento);
-       
+        
+           
     }
 }
     
