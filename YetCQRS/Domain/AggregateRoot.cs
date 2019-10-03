@@ -12,6 +12,17 @@ namespace YetCQRS.Domain
 {
     public abstract class AggregateRoot :Entity<Guid>, IDomainEventProvider
     {
+        public AggregateRoot(Guid id):
+            base(id)
+        {
+
+        }
+        public AggregateRoot():
+            base(Guid.NewGuid())
+        {
+
+        }
+
         #region Attributes
         private readonly List<Event> _changes = new List<Event>();
 
