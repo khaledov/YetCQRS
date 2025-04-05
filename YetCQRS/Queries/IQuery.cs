@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿
 
-namespace YetCQRS.Queries
+namespace YetCQRS.Queries;
+public interface IQuery : IMessage
 {
-    public interface IQuery<TResponse> : IRequest<TResponse>
-    {
-    }
+}
+public interface IQuery<TResponse> : IQuery
+{
 }

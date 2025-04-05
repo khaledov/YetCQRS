@@ -1,12 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+<PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
+<ItemGroup>
+  <Compile Remove="Cache\**" />
+  <Compile Remove="Domain\**" />
+  <Compile Remove="EventStore\**" />
+  <Compile Remove="Events\**" />
+  <EmbeddedResource Remove="Cache\**" />
+  <EmbeddedResource Remove="Domain\**" />
+  <EmbeddedResource Remove="EventStore\**" />
+  <EmbeddedResource Remove="Events\**" />
+  <None Remove="Cache\**" />
+  <None Remove="Domain\**" />
+  <None Remove="EventStore\**" />
+  <None Remove="Events\**" />
+</ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="8.5.0" />
-    <PackageReference Include="MediatR" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="Optional" Version="4.0.0" />

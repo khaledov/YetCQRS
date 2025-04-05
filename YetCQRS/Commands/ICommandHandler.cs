@@ -1,18 +1,10 @@
-﻿using MediatR;
-using Optional;
+﻿using Optional;
+using YetCQRS;
+using YetCQRS.Commands;
 
-namespace YetCQRS.Commands
+
+public interface ICommandHandler<in TCommand> where TCommand : ICommand
 {
-    public interface ICommandHandler<in TCommand> :
-        IRequestHandler<TCommand, Option<Unit, Error>>
-        where TCommand : ICommand
-    {
-    }
-
-    public interface ICommandHandler<in TCommand, TResult> :
-        IRequestHandler<TCommand, Option<TResult, Error>>
-        where TCommand : ICommand<TResult>
-    {
-
-    }
+    Task<Option<Error>> Execute(TCommand command, CancellationToken cancellationToken);
 }
+
