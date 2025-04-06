@@ -5,9 +5,9 @@ namespace TodoApp.Notifications;
 internal class TodoAddedEvent : IEvent
 {
     public readonly string Title;
-    public TodoAddedEvent(string title)
+    public TodoAddedEvent(Guid id,string title)
     {
-        Id = Guid.NewGuid();
+        Id = id;
         Title = title;
     }
     public Guid Id { get; set; }

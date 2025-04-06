@@ -3,7 +3,9 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using TodoApp.Dtos;
 using TodoApp.Notifications;
+using TodoApp.ReadModels;
 using TodoApp.WriteModels;
 using YetCQRS.DependencyInjection;
 using YetCQRS.Dispatchers;
@@ -20,8 +22,15 @@ var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 var result=dispatcher.SendAsync(cmd, CancellationToken.None).GetAwaiter().GetResult(); 
 if(result.IsValid)
 {
-    var @event=new TodoAddedEvent(cmd.Title);
+    var @event=new TodoAddedEvent(cmd.Id,cmd.Title);
    await dispatcher.PublishAsync(@event, CancellationToken.None);
 }else
     Console.WriteLine(result.ErrorMessages.ToList().Select(e=>e));
+Console.WriteLine("*************************************");
+
+Console.WriteLine("Enter Todo Id to get it from DB");
+string id = Console.ReadLine();
+var query = new GetTodoByIdQuery(Guid.Parse(id));
+var todo = await dispatcher.QueryAsync<GetTodoByIdQuery, TodoDto>(query, CancellationToken.None);
+Console.WriteLine($"Todo Title: {todo.Title}");
 Console.ReadLine();
