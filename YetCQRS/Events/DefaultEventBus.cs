@@ -4,9 +4,9 @@ public class DefaultEventBus : IEventBus
 {
  
   
-    public async Task Publish<TEvent>(Guid streamId, params TEvent[] events) where TEvent : IEvent
+    public  Task Publish<TEvent>(Guid streamId, params TEvent[] events) where TEvent : IEvent
     {
-        throw new Exception();
+        throw new NotImplementedException();
 
         
     }
