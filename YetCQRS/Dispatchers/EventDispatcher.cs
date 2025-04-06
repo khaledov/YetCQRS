@@ -20,16 +20,16 @@ internal class EventDispatcher(IServiceProvider serviceLocator) : IEventDispatch
     /// <exception cref="InvalidOperationException">Thrown when no handler is found for the event.</exception>
     public Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken) where TEvent : class, IEvent
     {
-        var handlers = _serviceLocator.GetServices<IEventHandler<TEvent>>() as List<IEventHandler<TEvent>>;
-        if (handlers?.Count == 0)
+        var handlers = _serviceLocator.GetServices<IEventHandler<TEvent>>().ToList();
+
+        if (handlers == null || handlers.Count == 0)
             throw new InvalidOperationException($"Handler for {typeof(TEvent).Name} not found.");
 
-        handlers?.ForEach(async handler =>
+        handlers.ForEach(async handler =>
         {
-            if (handler is not IEventHandler<TEvent> eventHandler)
-                throw new InvalidOperationException($"Handler for {@event.GetType().Name} not found.");
             await handler.Handle(@event, cancellationToken);
         });
+
         return Task.CompletedTask;
     }
 }

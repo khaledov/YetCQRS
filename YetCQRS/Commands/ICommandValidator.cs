@@ -1,10 +1,7 @@
 ﻿namespace YetCQRS.Commands;
 
-public interface ICommandValidator
-{
-    ValidationResult Validate(ICommand command);
-}
-public interface ICommandValidator<TCommand> : ICommandValidator where TCommand : ICommand
-{
 
+public interface ICommandValidator<TCommand>  where TCommand : ICommand
+{
+    ValidationResult Validate(TCommand command);
 }

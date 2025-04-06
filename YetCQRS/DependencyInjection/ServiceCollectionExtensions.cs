@@ -30,7 +30,9 @@ public static class ServiceCollectionExtensions
                             i.IsGenericType &&
                             i.GetGenericTypeDefinition() == typeof(IQueryHandler<,>) ||
                             i.IsGenericType &&
-                            i.GetGenericTypeDefinition() == typeof(IEventHandler<>));
+                            i.GetGenericTypeDefinition() == typeof(IEventHandler<>)||
+                            i.IsGenericType &&
+                            i.GetGenericTypeDefinition() == typeof(ICommandValidator<>));
 
             foreach (var interfaceType in interfaces)
             {

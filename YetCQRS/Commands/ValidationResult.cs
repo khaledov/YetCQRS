@@ -1,9 +1,17 @@
 ﻿namespace YetCQRS.Commands;
 
-public record ValidationResult(IList<string> ErrorMessages, bool IsValid)
+public class ValidationResult
 {
-    internal object SomeWhen<T1, T2>(Func<T1, bool> value1, Func<object, T2> value2)
+    public ValidationResult():this(new List<string>(), true)  
     {
-        throw new NotImplementedException();
+        
     }
+    public ValidationResult(IList<string> ErrorMessages, bool IsValid)
+    {
+        this.ErrorMessages = ErrorMessages;
+        this.IsValid = IsValid;
+    }
+
+    public IList<string> ErrorMessages { get; set; }
+    public bool IsValid { get; set; }
 }
