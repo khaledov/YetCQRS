@@ -16,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YetCQRS\YetCQRS.csproj" />
+    <ProjectReference Include="..\..\Framework\YetCQRS.SqlStreamStore\YetCQRS.SqlStreamStore.csproj" />
+    <ProjectReference Include="..\..\Framework\YetCQRS\YetCQRS.csproj" />
+
   </ItemGroup>
 
   <ItemGroup>
