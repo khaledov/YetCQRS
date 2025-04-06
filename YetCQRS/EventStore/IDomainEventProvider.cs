@@ -1,15 +1,14 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using YetCQRS.Events;
 
 namespace YetCQRS.EventStore
 {
     public interface IDomainEventProvider
     {
-        IEnumerable<Event> GetUncommittedChanges();
+        IEnumerable<IEvent> GetUncommittedChanges();
         void LoadFromHistory(IEnumerable history);
         void MarkChangesAsCommitted();
 
-       
+
     }
 }

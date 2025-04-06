@@ -3,8 +3,8 @@ using YetCQRS;
 using YetCQRS.Commands;
 
 
-public interface ICommandHandler<in TCommand> where TCommand : ICommand
+public interface ICommandHandler< TCommand> where TCommand : ICommand
 {
-    Task<Option<Error>> Execute(TCommand command, CancellationToken cancellationToken);
+    Task<Option<TCommand, Error>> Execute(TCommand command, CancellationToken cancellationToken);
 }
 

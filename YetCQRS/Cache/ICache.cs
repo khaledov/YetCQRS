@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using YetCQRS.Domain;
+﻿using YetCQRS.Domain;
 
 namespace YetCQRS.Cache
 {

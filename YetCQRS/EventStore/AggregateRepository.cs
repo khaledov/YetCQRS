@@ -1,15 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using YetCQRS.Domain;
+﻿using YetCQRS.Domain;
 using YetCQRS.Domain.Exceptions;
 using YetCQRS.Thread;
 
 namespace YetCQRS.EventStore
 {
-    public class AggregateRepository<T> : 
-        IAggregateRepository<T> where T:AggregateRoot,new()
-     {
+    public class AggregateRepository<T> :
+        IAggregateRepository<T> where T : AggregateRoot, new()
+    {
         private readonly IEventStore _eventStore;
         private NamedLocker _locker = new NamedLocker();
 
@@ -17,14 +14,14 @@ namespace YetCQRS.EventStore
         {
             if (eventStore == null)
                 throw new ArgumentNullException("eventStore");
-           
+
             _eventStore = eventStore;
-         
+
         }
 
-        public void Save(T aggregate, int? expectedVersion = null) 
+        public void Save(T aggregate, int? expectedVersion = null)
         {
-            lock(_locker.GetLock(aggregate.Id.ToString()))
+            lock (_locker.GetLock(aggregate.Id.ToString()))
             {
                 IDomainEventProvider domainEventProvider = (IDomainEventProvider)aggregate;
                 var eventList = domainEventProvider.GetUncommittedChanges().ToList();
@@ -40,27 +37,28 @@ namespace YetCQRS.EventStore
                 _eventStore.Save(aggregate.Id, eventList);
                 domainEventProvider.MarkChangesAsCommitted();
             }
-                    
-          
+
+
         }
 
-        public Task<T> Get(Guid aggregateId) 
+        public Task<T> Get(Guid aggregateId)
         {
             return LoadAggregate(aggregateId);
         }
 
-        private Task<T> LoadAggregate(Guid id) 
+        private Task<T> LoadAggregate(Guid id)
         {
-          return  Task.Run(() => {
+            return Task.Run(() =>
+            {
                 var aggregate = new T();
                 IDomainEventProvider domainEventProvider = (IDomainEventProvider)aggregate;
                 var events = _eventStore.LoadEventsFor(id, -1);
-              
+
                 domainEventProvider.LoadFromHistory(events);
-              return aggregate;
-          });
-            
-           
+                return aggregate;
+            });
+
+
         }
     }
 }

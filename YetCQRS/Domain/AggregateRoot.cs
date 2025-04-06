@@ -24,7 +24,7 @@ namespace YetCQRS.Domain
         }
 
         #region Attributes
-        private readonly List<Event> _changes = new List<Event>();
+        private readonly List<IEvent> _changes = new List<IEvent>();
 
         private NamedLocker _locker = new NamedLocker();
 
@@ -32,7 +32,7 @@ namespace YetCQRS.Domain
 
         #endregion
         #region Implemented Methods
-        IEnumerable<Event> IDomainEventProvider.GetUncommittedChanges()
+        IEnumerable<IEvent> IDomainEventProvider.GetUncommittedChanges()
         {
             lock (_locker.GetLock(Id.ToString()))
             {
@@ -47,7 +47,7 @@ namespace YetCQRS.Domain
 
                 foreach (var e in history)
                 {
-                    var @event = e as Event;
+                    var @event = e as IEvent;
                     if (@event.Version != Version + 1)
                         throw new EventsOutOfOrderException(@event.Id);
                     ApplyChange(@event, false);
@@ -64,7 +64,7 @@ namespace YetCQRS.Domain
             }
         }
         #endregion
-        private void ApplyChange(Event @event, bool isNew)
+        private void ApplyChange(IEvent @event, bool isNew)
         {
             lock (_locker.GetLock(Id.ToString()))
             {
@@ -77,7 +77,7 @@ namespace YetCQRS.Domain
                 }
             }
         }
-        protected void ApplyChange(Event @event)
+        protected void ApplyChange(IEvent @event)
         {
             ApplyChange(@event, true);
         }

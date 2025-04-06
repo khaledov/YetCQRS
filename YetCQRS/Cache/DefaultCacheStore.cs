@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using System;
 using YetCQRS.Domain;
 
 namespace YetCQRS.Cache

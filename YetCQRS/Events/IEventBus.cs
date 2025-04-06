@@ -1,11 +1,7 @@
-﻿using MediatR;
-using System;
-using System.Threading.Tasks;
-
-namespace YetCQRS.Events
+﻿namespace YetCQRS.Events
 {
     public interface IEventBus
     {
-        Task<Unit> Publish<TEvent>(Guid streamId, params TEvent[] events) where TEvent : Event;
+        Task Publish<TEvent>(Guid streamId, params TEvent[] events) where TEvent : IEvent;
     }
 }
