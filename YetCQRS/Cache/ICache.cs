@@ -6,7 +6,7 @@ namespace YetCQRS.Cache
     {
         bool IsTracked(Guid id);
         void Set(AggregateRoot aggregateRoot);
-        AggregateRoot Get(Guid aggregateRootId);
+        AggregateRoot? Get(Guid aggregateRootId);
         void Remove(Guid aggregateRootId);
         void RegisterEvictionCallback(Action<Guid> action);
     }

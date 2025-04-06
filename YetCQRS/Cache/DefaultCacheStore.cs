@@ -7,6 +7,7 @@ namespace YetCQRS.Cache
     {
         private readonly MemoryCacheEntryOptions _cacheOptions;
         private readonly IMemoryCache _cache;
+
         public DefaultCacheStore()
         {
             _cacheOptions = new MemoryCacheEntryOptions
@@ -15,16 +16,17 @@ namespace YetCQRS.Cache
             };
             _cache = new MemoryCache(new MemoryCacheOptions());
         }
-        public AggregateRoot Get(Guid aggregateRootId)
-        {
-            return (AggregateRoot)_cache.Get(aggregateRootId);
-        }
+
+        public AggregateRoot? Get(Guid aggregateRootId) => _cache?.Get<AggregateRoot>(aggregateRootId);
 
         public void RegisterEvictionCallback(Action<Guid> action)
         {
             _cacheOptions.RegisterPostEvictionCallback((key, value, reason, state) =>
             {
-                action.Invoke((Guid)key);
+                if (key is Guid id)
+                {
+                    action.Invoke(id);
+                }
             });
         }
 
@@ -40,8 +42,7 @@ namespace YetCQRS.Cache
 
         public bool IsTracked(Guid id)
         {
-
-            return _cache.TryGetValue(id, out var o) && o != null;
+            return _cache.TryGetValue(id, out _);
         }
     }
 }
