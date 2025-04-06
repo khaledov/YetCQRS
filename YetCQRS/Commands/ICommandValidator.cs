@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace YetCQRS.Commands;
+﻿namespace YetCQRS.Commands;
 
 public interface ICommandValidator
 {
-    ValidationResult Validate(object command);
+    ValidationResult Validate(ICommand command);
 }
 public interface ICommandValidator<TCommand> : ICommandValidator where TCommand : ICommand
 {

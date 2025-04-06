@@ -2,28 +2,31 @@
 
 namespace YetCQRS.Dispatchers;
 
-public class QueryDispatcher : IQueryDispatcher
+/// <summary>
+/// Initialize a new instance of <cref>QueryDispatcher</cref> class.
+/// </summary>
+/// <param name="serviceLocator">Service locator that can resolve all handlers</param>
+internal class QueryDispatcher(IServiceProvider serviceLocator) : IQueryDispatcher
 {
-    private readonly IServiceProvider _serviceLocator;
+    private readonly IServiceProvider _serviceLocator = serviceLocator ?? throw new ArgumentNullException(nameof(serviceLocator));
 
     /// <summary>
-    /// Initialize a new instance of <cref>QueryDispatcher</cref> class.
+    /// Asynchronously executes the specified query and returns the result.
     /// </summary>
-    /// <param name="serviceLocator">Service locator that can resolve all handlers</param>
-    public QueryDispatcher(IServiceProvider serviceLocator)
+    /// <typeparam name="TResult">The type of the result returned by the query.</typeparam>
+    /// <param name="query">The query to execute.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the result of the query.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the query is null.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the handler for the query is not found.</exception>
+    public async Task<TResult> QueryAsync<TQuery,TResult>(TQuery query, CancellationToken cancellationToken)where TQuery:class, IQuery<TResult> 
     {
-        _serviceLocator = serviceLocator ?? throw new ArgumentNullException(nameof(serviceLocator));
-    }
-    public async Task<TResult> QueryAsync<TResult>(IQuery<TResult> query)
-    {
-        {
-            if (query == null) throw new ArgumentNullException(nameof(query));
+        ArgumentNullException.ThrowIfNull(query);
 
-            var handler = _serviceLocator.GetService(typeof(IQueryHandler<IQuery<TResult>, TResult>)) as IQueryHandler<IQuery<TResult>, TResult>;
-            if (handler == null) throw new InvalidOperationException($"Handler for {typeof(IQuery<TResult>).Name} not found.");
+        var handler = _serviceLocator.GetService(typeof(IQueryHandler<TQuery, TResult>)) as IQueryHandler<TQuery, TResult> 
+            ?? throw new InvalidOperationException($"Handler for {typeof(TQuery).Name} not found.");
 
-            return await handler.Execute(query, CancellationToken.None);
-        }
+        return await handler.Execute(query, cancellationToken);
     }
 
 }
