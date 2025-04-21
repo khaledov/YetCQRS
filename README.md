@@ -1,4 +1,4 @@
-
+[![JITDispatcher](https://github.com/khaledov/JITDispatcher/blob/master/assets/JitDispatcher-132.png)
 # JITDispatcher
 
 **Tiny framework for whom wants to taste CQRS**
