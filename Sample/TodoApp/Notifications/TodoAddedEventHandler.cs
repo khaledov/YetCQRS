@@ -1,4 +1,4 @@
-﻿using YetCQRS.Events;
+﻿using JITDispatcher.Events;
 
 namespace TodoApp.Notifications;
 

@@ -7,11 +7,11 @@ using TodoApp.Dtos;
 using TodoApp.Notifications;
 using TodoApp.ReadModels;
 using TodoApp.WriteModels;
-using YetCQRS.DependencyInjection;
-using YetCQRS.Dispatchers;
+using JITDispatcher.DependencyInjection;
+using JITDispatcher.Dispatchers;
 
 var services = new ServiceCollection();
-services.AddYetCQRS(Assembly.GetExecutingAssembly());
+services.AddJITDispatcher(Assembly.GetExecutingAssembly());
  
 var serviceProvider = services.BuildServiceProvider();
 

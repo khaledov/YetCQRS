@@ -1,5 +1,5 @@
 ﻿using TodoApp.Dtos;
-using YetCQRS.Queries;
+using JITDispatcher.Queries;
 
 namespace TodoApp.ReadModels;
 

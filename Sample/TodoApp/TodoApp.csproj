@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Framework\YetCQRS\YetCQRS.csproj" />
+    <ProjectReference Include="..\..\Framework\JITDispatcher\JITDispatcher.csproj" />
   </ItemGroup>
 
 </Project>

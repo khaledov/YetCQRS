@@ -1,6 +1,6 @@
 ﻿using TodoApp.Dtos;
 using TodoApp.ReadModels;
-using YetCQRS.Queries;
+using JITDispatcher.Queries;
 
 namespace TodoApp.Handlers;
 

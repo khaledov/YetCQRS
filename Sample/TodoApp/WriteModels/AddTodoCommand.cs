@@ -1,5 +1,5 @@
 ﻿
-using YetCQRS.Commands;
+using JITDispatcher.Commands;
 
 namespace TodoApp.WriteModels;
 
