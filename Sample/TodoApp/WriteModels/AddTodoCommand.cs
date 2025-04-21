@@ -28,10 +28,7 @@ internal class AddTodoCommandValidator : ICommandValidator<AddTodoCommand>
         {
             result.ErrorMessages.Add("Title is required");
         }
-        //if (command.DueDate < DateTime.Now)
-        //{
-        //    result.ErrorMessages.Add("Due date cannot be in the past");
-        //}
+       
         return result;
     }
 
